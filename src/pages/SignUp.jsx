@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import MyContainer from "../components/MyContainer";
 import { Link } from "react-router";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { toast } from "react-toastify";
+import { auth } from "../firebase/firebase.config";
+import { IoEyeOff } from "react-icons/io5";
+import { FaEye } from "react-icons/fa";
 
 const SignUp = () => {
+  const [show, setShow] = useState(false);
+
   const handleSignup = (event) => {
     event.preventDefault();
     const name = event.target.name.value;
@@ -11,6 +18,28 @@ const SignUp = () => {
     const password = event.target.password.value;
 
     console.log("signup function entered!", { name, email, photo, password });
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      toast.error(
+        "Password must be at least 8 characters long and include uppercase and lowercase letters, a number, and a special character."
+      );
+      return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+        toast.success("Signup successful!");
+        event.target.reset()
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.message);
+      });
   };
   return (
     <div className="min-h-[96vh] flex items-center justify-center bg-linear-to-br from-indigo-500 via-purple-600 to-pink-500 relative overflow-hidden">
@@ -39,8 +68,14 @@ const SignUp = () => {
 
             <form onSubmit={handleSignup} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Name</label>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="name"
+                >
+                  Name
+                </label>
                 <input
+                  id="name"
                   type="text"
                   name="name"
                   placeholder="no one"
@@ -58,8 +93,14 @@ const SignUp = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Email</label>
+                <label
+                  className="block text-sm font-medium mb-1"
+                  htmlFor="email"
+                >
+                  Email
+                </label>
                 <input
+                  id="email"
                   type="email"
                   name="email"
                   placeholder="example@email.com"
@@ -68,16 +109,25 @@ const SignUp = () => {
               </div>
 
               <div className="relative">
-                <label className="block text-sm font-medium mb-1">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium mb-1"
+                >
                   Password
                 </label>
                 <input
-                  type="text"
+                  id="password"
+                  type={show ? "text" : "password"}
                   name="password"
                   placeholder="••••••••"
                   className="input input-bordered w-full bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-pink-400"
                 />
-                <span className="absolute right-2 top-9 cursor-pointer z-50"></span>
+                <span
+                  onClick={() => setShow(!show)}
+                  className="absolute right-2 top-9 cursor-pointer z-50"
+                >
+                  {show ? <FaEye /> : <IoEyeOff />}
+                </span>
               </div>
 
               <button type="submit" className="my-btn">
