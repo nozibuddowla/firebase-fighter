@@ -1,16 +1,51 @@
-# React + Vite
+# React Firebase Authentication
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[https://firebase-fighter-68a279.netlify.app/](https://firebase-fighter-68a279.netlify.app/)
 
-Currently, two official plugins are available:
+## Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project is a **modern authentication system** built with **React** and **Firebase Authentication**. It supports:
 
-## React Compiler
+- Email and password sign-up/sign-in
+- Google and GitHub social login
+- Password visibility toggle
+- Detailed error handling with **toast notifications**
+- Form validation (strong password rules)
+- Responsive UI with **TailwindCSS** and **DaisyUI**
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+It demonstrates how to implement **secure authentication** in a React app with a clean, user-friendly interface.
 
-## Expanding the ESLint configuration
+## Technologies Used
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **React** (v19)
+- **Firebase** (v12) Authentication
+- **React Router**
+- **TailwindCSS & DaisyUI**
+- **React Icons**
+- **React Toastify**
+
+## Local Setup
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/nozibuddowla/firebase-fighter.git
+```
+
+2. **Navigate into the project directory**
+
+```bash
+cd firebase-fighter
+```
+
+3. **Install dependencies**
+
+```bash
+npm install
+```
+
+4. **Run**
+
+```bash
+npm run dev
+```
