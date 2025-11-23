@@ -2,3 +2,7 @@
 @plugin "daisyui" {
   themes: light --default;
 }
+
+.my-btn {
+  @apply btn w-full bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold border-none hover:scale-105 transition-transform duration-200;
+}
