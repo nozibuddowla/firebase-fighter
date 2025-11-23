@@ -32,6 +32,7 @@ const SignIn = () => {
         console.log(user);
         setUser(user);
         toast.success("Logged in successfully!");
+        event.target.reset();
       })
       .catch((error) => {
         console.log(error);
@@ -41,7 +42,7 @@ const SignIn = () => {
   const handleForgetPassword = () => {};
   const handleGoogleSignin = () => {
     console.log("google sign in");
-    
+
     signInWithPopup(auth, googleProvider)
       .then((userCredential) => {
         const user = userCredential.user;

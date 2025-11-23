@@ -34,11 +34,30 @@ const SignUp = () => {
         const user = userCredential.user;
         console.log(user);
         toast.success("Signup successful!");
-        event.target.reset()
+        event.target.reset();
       })
       .catch((error) => {
         console.log(error);
-        toast.error(error.message);
+        console.log(error.code);
+        if (error.code === "auth/email-already-in-use") {
+          toast.error("User already exists in database!");
+        } else if (error.code === "auth/invalid-email") {
+          toast.error("Please enter a valid email address!");
+        } else if (error.code === "auth/weak-password") {
+          toast.error("Password must be at least 6 characters!");
+        } else if (error.code === "auth/user-not-found") {
+          toast.error("No user found with this email!");
+        } else if (error.code === "auth/wrong-password") {
+          toast.error("Incorrect password. Please try again!");
+        } else if (error.code === "auth/too-many-requests") {
+          toast.error("Too many login attempts. Try again later!");
+        } else if (error.code === "auth/popup-closed-by-user") {
+          toast.error("Authentication popup closed before completion!");
+        } else if (error.code === "auth/cancelled-popup-request") {
+          toast.error("Authentication popup request was cancelled!");
+        } else {
+          toast.error(error.message);
+        }
       });
   };
   return (
