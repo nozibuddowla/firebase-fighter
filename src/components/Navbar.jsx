@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import logo from "../assets/firebase-logo.png";
 import { Link } from "react-router";
 import MyContainer from "./MyContainer";
 import MyLink from "./MyLink";
+import { AuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
+  const result = useContext(AuthContext);
+  console.log(result);
+
   return (
     <div className="bg-slate-100f py-2 border-b border-b-slate-300 ">
       <MyContainer className="flex items-center justify-between">

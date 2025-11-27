@@ -1,11 +1,12 @@
 import { Link } from "react-router";
 import MyContainer from "../components/MyContainer";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { IoEyeOff } from "react-icons/io5";
 import {
   GithubAuthProvider,
   GoogleAuthProvider,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -19,6 +20,9 @@ const githubProvider = new GithubAuthProvider();
 const SignIn = () => {
   const [user, setUser] = useState(null);
   const [show, setShow] = useState(false);
+
+  // const [email, setEmail] = useState(null);
+  const emailRef = useRef(null)
 
   const handleSignin = (event) => {
     event.preventDefault();
@@ -57,7 +61,15 @@ const SignIn = () => {
         }
       });
   };
-  const handleForgetPassword = () => {};
+  const handleForgetPassword = () => {
+    const email = emailRef.current.value;
+    sendPasswordResetEmail(auth, email).then(res => {
+      toast.success("Check your email to reset password")
+    }).catch(e => {
+      toast.error(e.message);
+      
+    });
+  };
   const handleGoogleSignin = () => {
     console.log("google sign in");
 
@@ -144,7 +156,8 @@ const SignIn = () => {
                   <label className="block text-sm mb-1">Email</label>
                   <input
                     type="email"
-                    name="email"
+                      name="email"
+                      ref={emailRef}
                     // value={email}
                     // onChange={(e) => setEmail(e.target.value)}
                     placeholder="example@email.com"
