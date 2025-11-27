@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MyContainer from "../components/MyContainer";
 import { Link } from "react-router";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { toast } from "react-toastify";
 import { auth } from "../firebase/firebase.config";
 import { IoEyeOff } from "react-icons/io5";
@@ -33,8 +33,17 @@ const SignUp = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
-        toast.success("Signup successful!");
-        event.target.reset();
+        updateProfile(auth.currentUser, {
+          displayName: name,
+          photoURL: photo,
+        })
+          .then((res) => {
+            console.log(res);
+            toast.success("Signup successful!");
+          })
+          .catch((error) => {
+            toast.error(error.message);
+          });
       })
       .catch((error) => {
         console.log(error);

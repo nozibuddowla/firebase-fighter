@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { IoEyeOff } from "react-icons/io5";
 import {
+  GithubAuthProvider,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -13,6 +14,7 @@ import { toast } from "react-toastify";
 import { auth } from "../firebase/firebase.config";
 
 const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
 
 const SignIn = () => {
   const [user, setUser] = useState(null);
@@ -71,7 +73,20 @@ const SignIn = () => {
         toast.error(error.message);
       });
   };
-  const handleGithubSignin = () => {};
+  const handleGithubSignin = () => {
+    signInWithPopup(auth, githubProvider)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+        setUser(user);
+        toast.success("Logged in successfully!");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(error.message);
+      });
+  };
+
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
