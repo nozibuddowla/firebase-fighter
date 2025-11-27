@@ -22,16 +22,16 @@ const SignIn = () => {
 
   const handleSignin = (event) => {
     event.preventDefault();
-
     const email = event.target.email.value;
     const password = event.target.password.value;
-
-    console.log("signin function entered!", { email, password });
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log(user);
+        if (!user.emailVerified) {
+          toast.error("Your email is not verified!");
+          return;
+        }
         setUser(user);
         toast.success("Logged in successfully!");
         event.target.reset();
@@ -125,7 +125,7 @@ const SignIn = () => {
               <div className="text-center space-y-3">
                 <img
                   src={user?.photoURL || "https//via.placeholder.com/88"}
-                  className="h-20 w-20 rounded-full mx-auto"
+                  className="h-20 w-20 rounded-full mx-auto object-cover"
                   alt=""
                 />
                 <h2 className="text-xl font-semibold"> {user?.displayName} </h2>

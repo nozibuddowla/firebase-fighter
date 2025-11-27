@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import MyContainer from "../components/MyContainer";
 import { Link } from "react-router";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile,
+} from "firebase/auth";
 import { toast } from "react-toastify";
 import { auth } from "../firebase/firebase.config";
 import { IoEyeOff } from "react-icons/io5";
@@ -29,17 +33,27 @@ const SignUp = () => {
       return;
     }
 
+    // 1st step: Create user
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log(user);
-        updateProfile(auth.currentUser, {
+
+        // 2nd step: Update profile
+        updateProfile(user, {
           displayName: name,
           photoURL: photo,
         })
-          .then((res) => {
-            console.log(res);
-            toast.success("Signup successful!");
+          .then(() => {
+            // 3rd step: Email verification
+            sendEmailVerification(user)
+              .then(() => {
+                toast.success(
+                  "Signup successful! Check your email to active your account. "
+                );
+              })
+              .catch((error) => {
+                toast.error(error.message);
+              });
           })
           .catch((error) => {
             toast.error(error.message);
