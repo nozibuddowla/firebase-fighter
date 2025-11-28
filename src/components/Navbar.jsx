@@ -34,9 +34,11 @@ const Navbar = () => {
           <li>
             <MyLink to={"/about-us"}>About US</MyLink>
           </li>
-          <li>
-            <MyLink to={"/profile"}>Profile</MyLink>
-          </li>
+          {user && (
+            <li>
+              <MyLink to={"/profile"}>Profile</MyLink>
+            </li>
+          )}
         </ul>
 
         <div>

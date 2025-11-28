@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import MyContainer from "../components/MyContainer";
 import { useContext, useRef, useState } from "react";
 import { FaEye } from "react-icons/fa";
@@ -19,6 +19,15 @@ const SignIn = () => {
     setUser,
     setLoading,
   } = useContext(AuthContext);
+  const location = useLocation();
+  console.log(location);
+  const from = location.state || "/";
+  const navigate = useNavigate();
+
+  if (user) {
+    navigate("/");
+    return;
+  }
 
   const handleSignin = (event) => {
     event.preventDefault();
@@ -29,12 +38,14 @@ const SignIn = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         setLoading(false);
+        
         if (!user.emailVerified) {
           toast.error("Your email is not verified!");
           return;
         }
         setUser(user);
         toast.success("Logged in successfully!");
+        navigate(from);
         event.target.reset();
       })
       .catch((error) => {
@@ -78,6 +89,7 @@ const SignIn = () => {
         console.log(user);
         setLoading(false);
         setUser(user);
+        navigate(from);
         toast.success("Logged in successfully!");
       })
       .catch((error) => {
@@ -92,6 +104,7 @@ const SignIn = () => {
         console.log(user);
         setLoading(false);
         setUser(user);
+        navigate(from);
         toast.success("Logged in successfully!");
       })
       .catch((error) => {
