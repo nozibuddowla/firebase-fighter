@@ -17,6 +17,7 @@ const SignIn = () => {
     passwordReset,
     user,
     setUser,
+    setLoading,
   } = useContext(AuthContext);
 
   const handleSignin = (event) => {
@@ -27,6 +28,7 @@ const SignIn = () => {
     logIn(email, password)
       .then((userCredential) => {
         const user = userCredential.user;
+        setLoading(false);
         if (!user.emailVerified) {
           toast.error("Your email is not verified!");
           return;
@@ -60,6 +62,7 @@ const SignIn = () => {
     const email = emailRef.current.value;
     passwordReset(email)
       .then(() => {
+        setLoading(false);
         toast.success("Check your email to reset password");
       })
       .catch((e) => {
@@ -73,6 +76,7 @@ const SignIn = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
+        setLoading(false);
         setUser(user);
         toast.success("Logged in successfully!");
       })
@@ -86,6 +90,7 @@ const SignIn = () => {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
+        setLoading(false);
         setUser(user);
         toast.success("Logged in successfully!");
       })

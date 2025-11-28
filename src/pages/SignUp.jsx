@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import MyContainer from "../components/MyContainer";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -13,7 +13,15 @@ import { AuthContext } from "../context/AuthContext";
 
 const SignUp = () => {
   const [show, setShow] = useState(false);
-  const { createUser, updateUser, emailVerification } = useContext(AuthContext);
+  const {
+    createUser,
+    updateUser,
+    emailVerification,
+    setLoading,
+    logOut,
+    setUser,
+  } = useContext(AuthContext);
+  const navigate = useNavigate()
 
   const handleSignup = (event) => {
     event.preventDefault();
@@ -45,9 +53,20 @@ const SignUp = () => {
             // 3rd step: Email verification
             emailVerification()
               .then(() => {
-                toast.success(
-                  "Signup successful! Check your email to active your account. "
-                );
+                setLoading(false);
+
+                // Signout user
+                logOut()
+                  .then(() => {
+                    toast.success(
+                      "Signup successful! Check your email to active your account. "
+                    );
+                    setUser(null);
+                    navigate("/signin")
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
               })
               .catch((error) => {
                 toast.error(error.message);

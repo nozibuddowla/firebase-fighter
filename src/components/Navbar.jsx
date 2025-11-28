@@ -5,9 +5,10 @@ import MyContainer from "./MyContainer";
 import MyLink from "./MyLink";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import { ClockLoader } from "react-spinners";
 
 const Navbar = () => {
-  const { logOut, user, setUser } = useContext(AuthContext);
+  const { logOut, user, setUser, loading, setLoading } = useContext(AuthContext);
 
   const handleSignOut = () => {
     logOut()
@@ -39,7 +40,9 @@ const Navbar = () => {
         </ul>
 
         <div>
-          {user ? (
+          {loading ? (
+            <ClockLoader size={40} color="#e74c3c" />
+          ) : user ? (
             <div className="text-center space-y-3">
               {/* change popover-1 and --anchor-1 names. Use unique names for each dropdown */}
               {/* For TSX uncomment the commented types below */}
