@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import MyContainer from "../components/MyContainer";
 import { Link } from "react-router";
 import {
@@ -7,12 +7,13 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { toast } from "react-toastify";
-import { auth } from "../firebase/firebase.config";
 import { IoEyeOff } from "react-icons/io5";
 import { FaEye } from "react-icons/fa";
+import { AuthContext } from "../context/AuthContext";
 
 const SignUp = () => {
   const [show, setShow] = useState(false);
+  const { createUser, updateUser, emailVerification } = useContext(AuthContext);
 
   const handleSignup = (event) => {
     event.preventDefault();
@@ -34,18 +35,15 @@ const SignUp = () => {
     }
 
     // 1st step: Create user
-    createUserWithEmailAndPassword(auth, email, password)
+    createUser(email, password)
       .then((userCredential) => {
         const user = userCredential.user;
 
         // 2nd step: Update profile
-        updateProfile(user, {
-          displayName: name,
-          photoURL: photo,
-        })
+        updateUser(name, photo)
           .then(() => {
             // 3rd step: Email verification
-            sendEmailVerification(user)
+            emailVerification()
               .then(() => {
                 toast.success(
                   "Signup successful! Check your email to active your account. "

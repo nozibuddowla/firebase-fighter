@@ -1,35 +1,30 @@
 import { Link } from "react-router";
 import MyContainer from "../components/MyContainer";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { IoEyeOff } from "react-icons/io5";
-import {
-  GithubAuthProvider,
-  GoogleAuthProvider,
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-} from "firebase/auth";
 import { toast } from "react-toastify";
-import { auth } from "../firebase/firebase.config";
-
-const googleProvider = new GoogleAuthProvider();
-const githubProvider = new GithubAuthProvider();
+import { AuthContext } from "../context/AuthContext";
 
 const SignIn = () => {
-  const [user, setUser] = useState(null);
   const [show, setShow] = useState(false);
 
-  // const [email, setEmail] = useState(null);
-  const emailRef = useRef(null)
+  const emailRef = useRef(null);
+  const {
+    logIn,
+    googleLogin,
+    githubLogin,
+    passwordReset,
+    user,
+    setUser,
+  } = useContext(AuthContext);
 
   const handleSignin = (event) => {
     event.preventDefault();
     const email = event.target.email.value;
     const password = event.target.password.value;
 
-    signInWithEmailAndPassword(auth, email, password)
+    logIn(email, password)
       .then((userCredential) => {
         const user = userCredential.user;
         if (!user.emailVerified) {
@@ -63,17 +58,18 @@ const SignIn = () => {
   };
   const handleForgetPassword = () => {
     const email = emailRef.current.value;
-    sendPasswordResetEmail(auth, email).then(res => {
-      toast.success("Check your email to reset password")
-    }).catch(e => {
-      toast.error(e.message);
-      
-    });
+    passwordReset(email)
+      .then(() => {
+        toast.success("Check your email to reset password");
+      })
+      .catch((e) => {
+        toast.error(e.message);
+      });
   };
   const handleGoogleSignin = () => {
     console.log("google sign in");
 
-    signInWithPopup(auth, googleProvider)
+    googleLogin()
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
@@ -86,7 +82,7 @@ const SignIn = () => {
       });
   };
   const handleGithubSignin = () => {
-    signInWithPopup(auth, githubProvider)
+    githubLogin()
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
@@ -96,17 +92,6 @@ const SignIn = () => {
       .catch((error) => {
         console.log(error);
         toast.error(error.message);
-      });
-  };
-
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        toast.success("Signout successful");
-        setUser(null);
-      })
-      .catch((error) => {
-        console.log(error);
       });
   };
 
@@ -133,115 +118,100 @@ const SignIn = () => {
 
           {/* Login card */}
           <div className="w-full max-w-md backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl rounded-2xl p-8">
-            {user ? (
-              <div className="text-center space-y-3">
-                <img
-                  src={user?.photoURL || "https//via.placeholder.com/88"}
-                  className="h-20 w-20 rounded-full mx-auto object-cover"
-                  alt=""
+            <form onSubmit={handleSignin} className="space-y-5">
+              <h2 className="text-2xl font-semibold mb-2 text-center text-white">
+                Sign In
+              </h2>
+
+              <div>
+                <label className="block text-sm mb-1">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  ref={emailRef}
+                  // value={email}
+                  // onChange={(e) => setEmail(e.target.value)}
+                  placeholder="example@email.com"
+                  className="input input-bordered w-full bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 />
-                <h2 className="text-xl font-semibold"> {user?.displayName} </h2>
-                <p className="text-lg text-white/80"> {user?.email} </p>
-                <button onClick={handleSignOut} className="my-btn">
-                  Sign Out
-                </button>
               </div>
-            ) : (
-              <form onSubmit={handleSignin} className="space-y-5">
-                <h2 className="text-2xl font-semibold mb-2 text-center text-white">
-                  Sign In
-                </h2>
 
-                <div>
-                  <label className="block text-sm mb-1">Email</label>
-                  <input
-                    type="email"
-                      name="email"
-                      ref={emailRef}
-                    // value={email}
-                    // onChange={(e) => setEmail(e.target.value)}
-                    placeholder="example@email.com"
-                    className="input input-bordered w-full bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                </div>
-
-                <div className="relative">
-                  <label className="block text-sm mb-1" htmlFor="password">
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    type={show ? "text" : "password"}
-                    name="password"
-                    placeholder="••••••••"
-                    className="input input-bordered w-full bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-pink-400"
-                  />
-                  <span
-                    onClick={() => setShow(!show)}
-                    className="absolute right-2 top-9 cursor-pointer z-50"
-                  >
-                    {show ? <FaEye /> : <IoEyeOff />}
-                  </span>
-                </div>
-
-                <button
-                  className="hover:underline cursor-pointer"
-                  onClick={handleForgetPassword}
-                  type="button"
+              <div className="relative">
+                <label className="block text-sm mb-1" htmlFor="password">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type={show ? "text" : "password"}
+                  name="password"
+                  placeholder="••••••••"
+                  className="input input-bordered w-full bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                />
+                <span
+                  onClick={() => setShow(!show)}
+                  className="absolute right-2 top-9 cursor-pointer z-50"
                 >
-                  Forget password?
-                </button>
+                  {show ? <FaEye /> : <IoEyeOff />}
+                </span>
+              </div>
 
-                <button type="submit" className="my-btn">
-                  Login
-                </button>
+              <button
+                className="hover:underline cursor-pointer"
+                onClick={handleForgetPassword}
+                type="button"
+              >
+                Forget password?
+              </button>
 
-                {/* Divider */}
-                <div className="flex items-center justify-center gap-2 my-2">
-                  <div className="h-px w-16 bg-white/30"></div>
-                  <span className="text-sm text-white/70">or</span>
-                  <div className="h-px w-16 bg-white/30"></div>
-                </div>
+              <button type="submit" className="my-btn">
+                Login
+              </button>
 
-                {/* Google Signin */}
-                <button
-                  type="button"
-                  onClick={handleGoogleSignin}
-                  className="flex items-center justify-center gap-3 bg-white text-gray-800 px-5 py-2 rounded-lg w-full font-semibold hover:bg-gray-100 transition-colors cursor-pointer"
+              {/* Divider */}
+              <div className="flex items-center justify-center gap-2 my-2">
+                <div className="h-px w-16 bg-white/30"></div>
+                <span className="text-sm text-white/70">or</span>
+                <div className="h-px w-16 bg-white/30"></div>
+              </div>
+
+              {/* Google Signin */}
+              <button
+                type="button"
+                onClick={handleGoogleSignin}
+                className="flex items-center justify-center gap-3 bg-white text-gray-800 px-5 py-2 rounded-lg w-full font-semibold hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                <img
+                  src="https://www.svgrepo.com/show/475656/google-color.svg"
+                  alt="google"
+                  className="w-5 h-5"
+                />
+                Continue with Google
+              </button>
+
+              {/* Github Signin */}
+              <button
+                type="button"
+                onClick={handleGithubSignin}
+                className="flex items-center justify-center gap-3 bg-white text-gray-800 px-5 py-2 rounded-lg w-full font-semibold hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                <img
+                  src="https://img.icons8.com/fluency/48/github.png"
+                  alt="google"
+                  className="w-5 h-5"
+                />
+                Continue with Github
+              </button>
+
+              <p className="text-center text-sm text-white/80 mt-3">
+                Don’t have an account?{" "}
+                <Link
+                  to="/signup"
+                  className="text-pink-300 hover:text-white underline"
                 >
-                  <img
-                    src="https://www.svgrepo.com/show/475656/google-color.svg"
-                    alt="google"
-                    className="w-5 h-5"
-                  />
-                  Continue with Google
-                </button>
-
-                {/* Github Signin */}
-                <button
-                  type="button"
-                  onClick={handleGithubSignin}
-                  className="flex items-center justify-center gap-3 bg-white text-gray-800 px-5 py-2 rounded-lg w-full font-semibold hover:bg-gray-100 transition-colors cursor-pointer"
-                >
-                  <img
-                    src="https://img.icons8.com/fluency/48/github.png"
-                    alt="google"
-                    className="w-5 h-5"
-                  />
-                  Continue with Github
-                </button>
-
-                <p className="text-center text-sm text-white/80 mt-3">
-                  Don’t have an account?{" "}
-                  <Link
-                    to="/signup"
-                    className="text-pink-300 hover:text-white underline"
-                  >
-                    Sign up
-                  </Link>
-                </p>
-              </form>
-            )}
+                  Sign up
+                </Link>
+              </p>
+            </form>
           </div>
         </div>
       </MyContainer>
